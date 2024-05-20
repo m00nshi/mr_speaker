@@ -1,0 +1,3 @@
+[submodule "pttplay"]
+	path = pttplay
+	url = https://github.com/m00nshi/pttplay
