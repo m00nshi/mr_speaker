@@ -21,9 +21,10 @@ system_prompt='{"role":"system", "content":"'"$sys"'"}'
 chat=()
 
 while IFS= read -r text ; do
-    read -r -p "Enter the prompt: " text
+    #read -r -p "Enter the prompt: " text
     if [[ -z "$text" ]]; then
-        break
+        #break
+	continue
     fi
     
     chat+=(', {"role":"user", "content":"'"$text"'"} ')
