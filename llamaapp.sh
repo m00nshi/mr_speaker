@@ -4,19 +4,6 @@ sys="You are a vampire, called Edward, you struggle to resist eating humans but 
 max_memory=10
 
 
-##--------------------------------------
-#logfile="logfile.log"
-#screen -S llama_session -dm bash -c "cd .. && ./$llamafile -ngl 999 > \"$logfile\" 2>&1"
-#echo "llama loaded"
-##--------------------------------------
-#close_session() {
-#    screen -X -S llama_session quit
-#    exit 0
-#}
-#trap close_session SIGINT
-#
-##--------------------------------------
-
 system_prompt='{"role":"system", "content":"'"$sys"'"}'
 chat=()
 

@@ -16,23 +16,6 @@ def scribe(audio):
 	return speech
 
 
-#def wav_to_bytes(wav_file):
-#    with open(wav_file, 'rb') as f:
-#        bytes_data = f.read(44)
-#    return bytes_data
-#
-#wav_file = 'out.wav'
-#header = wav_to_bytes(wav_file)
-
-#while True:
-##    print("this is python")
-#    data = sys.stdin.buffer.read()
-#    if not data:
-#        continue
-#    audio = io.BytesIO(data)
-#    speech = scribe(audio)
-#    print(speech)
-
 pipe_in_path = "/tmp/whisper_pipe"
 
 with open(pipe_in_path, 'rb') as pipe_in:
