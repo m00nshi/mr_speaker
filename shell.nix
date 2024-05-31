@@ -1,6 +1,6 @@
 let
   pkgs = import (builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+    url = "https://github.com/NixOS/nixpkgs/archive//ad57eef4ef0659193044870c731987a6df5cf56b.tar.gz";
   }) {};
 
   myPython = pkgs.python3.withPackages (p: with p; [
