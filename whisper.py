@@ -7,6 +7,10 @@ import json
 import subprocess
 from faster_whisper import WhisperModel
 
+hw = "hw:0"
+#   CHOOSE CORRECT AUDIO DEVICE NUMBER
+memory = 100
+
 # Initialize the Whisper model
 model_id = os.getenv("WHISPER_MODEL")
 model = WhisperModel(model_id)
@@ -64,7 +68,7 @@ while True:
 
     # Start the subprocess
     cosrecord_process = subprocess.Popen(
-        ['./pttplay/result/bin/cosrecord.sh', 'hw:2', '0D8C/0012', '-'],
+        ['cosrecord.sh', hw, '0D8C/0012', '-'],
         stdout=open("/tmp/whisper_file", 'wb')
     )
     
@@ -83,26 +87,23 @@ while True:
     
     speech = scribe(audio)
 
+    # say Harry Potter to clear chat history
     if "Harry" in speech or "Potter" in speech:
         chat_history = []
         print("\n###\nBackdoor activated, resetting session state\n###\n", flush=True)
         continue
-
     if speech == "":
         continue
     
     print(speech, flush=True)
-    sys.stdout.flush()
-     
-    #llamaApp = subprocess.Popen("./llamaapp.sh", stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-    #generatedSpeech, err = llamaApp.communicate(input=(speech.encode() + b"\n"))
-    generatedSpeech = send_chat(system_prompt, speech, chat_history, 100, "http://localhost:8080/v1/chat/completions")
+   
+    generatedSpeech = send_chat(system_prompt, speech, chat_history, memory, "http://localhost:8080/v1/chat/completions")
     
     piper = subprocess.Popen(("piper", "-q", "--model", modelPath, "--output_file", "/tmp/piper_file"), stdin=subprocess.PIPE)
     piper.communicate(input=generatedSpeech.replace("<|eot_id|>", "").encode())
 
     # Send the speech data to the subprocess
-    pttplay = subprocess.Popen(("./pttplay/result/bin/cosplay.sh", "hw:2", "0D8C/0012", "/tmp/piper_file"))
+    pttplay = subprocess.Popen(("cosplay.sh", hw, "0D8C/0012", "/tmp/piper_file"))
 
     # Wait for the subprocess to finish (if needed)
     pttplay.wait()
