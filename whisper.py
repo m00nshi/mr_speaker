@@ -7,9 +7,12 @@ import json
 import subprocess
 from faster_whisper import WhisperModel
 
-hw = "hw:0"
+hw = "hw:1"
+hidraw = "/dev/hidraw0"
 #   CHOOSE CORRECT AUDIO DEVICE NUMBER
 memory = 100
+
+filter_out_tokens = [ "<|eot_id|>", "<|im_end|>"]
 
 # Initialize the Whisper model
 model_id = os.getenv("WHISPER_MODEL")
@@ -68,7 +71,7 @@ while True:
 
     # Start the subprocess
     cosrecord_process = subprocess.Popen(
-        ['cosrecord.sh', hw, '0D8C/0012', '-'],
+        ['cosrecord.sh', hw, hidraw, '-'],
         stdout=open("/tmp/whisper_file", 'wb')
     )
     
@@ -98,12 +101,17 @@ while True:
     print(speech, flush=True)
    
     generatedSpeech = send_chat(system_prompt, speech, chat_history, memory, "http://localhost:8080/v1/chat/completions")
+
+    for token in filter_out_tokens:
+        generatedSpeech = generatedSpeech.replace(token, "")
+
+    print(generatedSpeech)
     
     piper = subprocess.Popen(("piper", "-q", "--model", modelPath, "--output_file", "/tmp/piper_file"), stdin=subprocess.PIPE)
-    piper.communicate(input=generatedSpeech.replace("<|eot_id|>", "").encode())
+    piper.communicate(input=generatedSpeech.encode())
 
     # Send the speech data to the subprocess
-    pttplay = subprocess.Popen(("cosplay.sh", hw, "0D8C/0012", "/tmp/piper_file"))
+    pttplay = subprocess.Popen(("cosplay.sh", hw, hidraw, "/tmp/piper_file"))
 
     # Wait for the subprocess to finish (if needed)
     pttplay.wait()
