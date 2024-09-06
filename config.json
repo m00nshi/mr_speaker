@@ -1,0 +1,6 @@
+{
+	"main_prompt": "main.prompt",
+	"memory": 100,
+	"address": "127.0.0.1",
+	"port": "8080"
+}

@@ -6,11 +6,34 @@ import requests
 import json
 import subprocess
 from faster_whisper import WhisperModel
+import re
 
-hw = "hw:1"
-hidraw = "/dev/hidraw0"
+def find_devices():
+    result = subprocess.run("cosplay.sh", capture_output=True, text=True)
+    pattern_line = r".*0d8c.*0012.*USB Audio Device.*/dev/snd/pcmC1D0c.*"
+    matches = re.findall(pattern_line, result.stdout, re.MULTILINE)
+    if len(matches) > 1:
+        print("hmmm... more than one capture soundcard found")
+        quit()
+    pattern_hw = r"plughw:(\d+),\d+"
+    matches_hw = re.search(pattern_hw, matches[0])
+    hw_num = matches_hw.group(1)
+    hw = "hw:" + hw_num
+    pattern_hidraw = r"/dev/hidraw\d+"
+    matches_hidraw = re.search(pattern_hidraw, matches[0])
+    hidraw = matches_hidraw.group()
+    return hw, hidraw
+
+hw, hidraw = find_devices()
 #   CHOOSE CORRECT AUDIO DEVICE NUMBER
-memory = 100
+
+with open('config.json', 'r') as file:
+    config = json.load(file)
+
+main_prompt_file = config['main_prompt']
+memory = config['memory']
+address = config['address']
+port = config['port']
 
 filter_out_tokens = [ "<|eot_id|>", "<|im_end|>"]
 
@@ -19,7 +42,7 @@ model_id = os.getenv("WHISPER_MODEL")
 model = WhisperModel(model_id)
 
 # Read system prompt from file
-with open("main.prompt", 'r') as file:
+with open(main_prompt_file, 'r') as file:
     sysprompt = file.read().strip()
 
 # Initial chat setup
@@ -100,7 +123,7 @@ while True:
     
     print(speech, flush=True)
    
-    generatedSpeech = send_chat(system_prompt, speech, chat_history, memory, "http://localhost:8080/v1/chat/completions")
+    generatedSpeech = send_chat(system_prompt, speech, chat_history, memory, f"http://{address}:{port}/v1/chat/completions")
 
     for token in filter_out_tokens:
         generatedSpeech = generatedSpeech.replace(token, "")

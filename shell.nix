@@ -27,14 +27,16 @@ let
 
 ### CHOSE ONE OF THE LLAMAFILE MODELS
 ### find more here : https://huggingface.co/Mozilla
-  llamafile = pkgs.fetchurl {
-    url = "https://huggingface.co/Mozilla/Phi-3-mini-4k-instruct-llamafile/resolve/main/Phi-3-mini-4k-instruct.Q5_K_M.llamafile";
-    sha256 = "sha256-tl903HWLIEMPb8ww8SOp5IxYgM5piEFSHdlaxMkK8Hk=";
-    recursiveHash = true;
-    postFetch = ''
-      chmod +x $out
-    '';
-  };
+
+llamafile = "choose your llama";
+#  llamafile = pkgs.fetchurl {
+#    url = "https://huggingface.co/Mozilla/Phi-3-mini-4k-instruct-llamafile/resolve/main/Phi-3-mini-4k-instruct.Q5_K_M.llamafile";
+#    sha256 = "sha256-tl903HWLIEMPb8ww8SOp5IxYgM5piEFSHdlaxMkK8Hk=";
+#    recursiveHash = true;
+#    postFetch = ''
+#      chmod +x $out
+#    '';
+#  };
 #  llamafile = pkgs.fetchurl {
 #    url = "https://huggingface.co/jartine/mistral-7b.llamafile/resolve/main/mistral-7b-instruct-v0.1-Q4_K_M.llamafile";
 #    sha256 = "sha256-WiGeCvg9nK6hGVaSWBaJBzper0K+zCa1m3pGLibAFRg=";
